@@ -63,14 +63,6 @@ func main() {
 
 	pixels := make([]byte, winHeight*winWidth*4)
 
-	for y := 0; y < winHeight; y++ {
-		for x := 0; x < winWidth; x++ {
-			setPixel(x, y, colour{0, 255, 255}, pixels)
-		}
-	}
-	tex.Update(nil, pixels, winWidth*4)
-	renderer.Copy(tex, nil, nil)
-	renderer.Present()
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -78,43 +70,15 @@ func main() {
 				return
 			}
 		}
-		sdl.Delay(15)
 
+		makeNoise()
+
+		tex.Update(nil, pixels, winWidth*4)
+		renderer.Copy(tex, nil, nil)
+		renderer.Present()
 	}
 
 }
-
-/* This code ported to Go from Stefan Gustavson's C implementation, his comments follow:
- * https://github.com/stegu/perlin-noise/blob/master/src/simplexnoise1234.c
- * SimplexNoise1234, Simplex noise with true analytic
- * derivative in 1D to 4D.
- *
- * Author: Stefan Gustavson, 2003-2005
- * Contact: stefan.gustavson@liu.se
- *
- *
- * This code was GPL licensed until February 2011.
- * As the original author of this code, I hereby
- * release it into the public domain.
- * Please feel free to use it for whatever you want.
- * Credit is appreciated where appropriate, and I also
- * appreciate being told where this code finds any use,
- * but you may do as you like.
- */
-
-/*
- * This implementation is "Simplex Noise" as presented by
- * Ken Perlin at a relatively obscure and not often cited course
- * session "Real-Time Shading" at Siggraph 2001 (before real
- * time shading actually took off), under the title "hardware noise".
- * The 3D function is numerically equivalent to his Java reference
- * code available in the PDF course notes, although I re-implemented
- * it from scratch to get more readable code. The 1D, 2D and 4D cases
- * were implemented from scratch by me from Ken Perlin's text.
- *
- * This file has no dependencies on any other file, not even its own
- * header file. The header file is made for use by external code only.
- */
 
 func fastFloor(x float32) int {
 	if float32(int(x)) <= x {
